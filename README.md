@@ -19,11 +19,11 @@ This is an attempt to install the k8s cluster proposed in the tutorial kubeadm-h
 
 | hostname | IP| Components |
 | -------- | -------- | -------- |
-| k8s-master1    | 10.53.44.105        | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
-| k8s-master2    | 10.53.44.106        | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
-| k8s-master3    | 10.53.44.107        | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
-| k8s-worker1    | 10.53.44.108        | kubelet, kube-proxy     |
-| k8s-worker2    | 10.53.44.109        | kubelet, kube-proxy     |
+| k8s-master1.mpac.net    | 10.53.44.105        | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
+| k8s-master2.mpac.net    | 10.53.44.106        | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
+| k8s-master3.mpac.net    | 10.53.44.107        | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
+| k8s-node1.mpac.net      | 10.53.44.108        | kubelet, kube-proxy     |
+| k8s-node2.mpac.net      | 10.53.44.109        | kubelet, kube-proxy     |
 
 * **Keepalived  VIP : 10.53.44.110**
 
@@ -144,8 +144,6 @@ on master1,2,3
 # docker pull gcr.io/google_containers/pause-amd64:3.1
 
 # docker images
-
-
 ```
 
 # Deploy etcd in cluster
@@ -154,21 +152,18 @@ on master1
 ```
 # mkdir -p /var/lib/etcd-cluster
 # docker run --restart always -d -v /etc/ssl/certs:/etc/ssl/certs -v /var/lib/etcd-cluster:/var/lib/etcd -p 2380:2380 -p 2379:2379 --name etcd gcr.io/google_containers/etcd-amd64:3.2.14 etcd --name infra0 --initial-advertise-peer-urls http://10.53.44.105:2380 --listen-peer-urls http://0.0.0.0:2380 --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://10.53.44.105:2379 --initial-cluster-token etcd-cluster-1 --initial-cluster infra0=http://10.53.44.105:2380,infra1=http://10.53.44.106:2380,infra2=http://10.53.44.107:2380 --auto-tls --peer-auto-tls --initial-cluster-state new
-
 ```
 
 on master2
 ```
 # mkdir -p /var/lib/etcd-cluster
 # docker run --restart always -d -v /etc/ssl/certs:/etc/ssl/certs -v /var/lib/etcd-cluster:/var/lib/etcd -p 2380:2380 -p 2379:2379 --name etcd gcr.io/google_containers/etcd-amd64:3.2.14 etcd --name infra1 --initial-advertise-peer-urls http://10.53.44.106:2380 --listen-peer-urls http://0.0.0.0:2380 --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://10.53.44.106:2379 --initial-cluster-token etcd-cluster-1 --initial-cluster infra0=http://10.53.44.105:2380,infra1=http://10.53.44.106:2380,infra2=http://10.53.44.107:2380 --auto-tls --peer-auto-tls --initial-cluster-state new
-
 ```
 on master3
 
 ```
 # mkdir -p /var/lib/etcd-cluster
 # docker run --restart always -d -v /etc/ssl/certs:/etc/ssl/certs -v /var/lib/etcd-cluster:/var/lib/etcd -p 2380:2380 -p 2379:2379 --name etcd gcr.io/google_containers/etcd-amd64:3.2.14 etcd --name infra2 --initial-advertise-peer-urls http://10.53.44.107:2380 --listen-peer-urls http://0.0.0.0:2380 --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://10.53.44.107:2379 --initial-cluster-token etcd-cluster-1 --initial-cluster infra0=http://10.53.44.105:2380,infra1=http://10.53.44.106:2380,infra2=http://10.53.44.107:2380 --auto-tls --peer-auto-tls --initial-cluster-state new
-
 ```
 
 Enter into container and check if etcd cluster is working:
@@ -184,8 +179,6 @@ cluster is healthy
 
 / # exit
 ```
-**DO Snapshot!!!**
-
 # kubeadm init
 on master1
 ```
@@ -217,11 +210,7 @@ etcd:
 
 # systemctl daemon-reload
 # kubeadm init --config=/root/kubeadm-ha/kubeadm-init-v1.9.3.yaml
-:
-:
 ```
-
-
 Waiting for initialization, then you can see:
 ```
 Your Kubernetes master has initialized successfully!
@@ -240,7 +229,6 @@ You can now join any number of machines by running the following on each node
 as root:
 
   kubeadm join --token dbc020.1186330e3b3f9573 10.53.44.105:6443 --discovery-token-ca-cert-hash sha256:c226b2e3b498bd2311f1c14f11422220b3854f8dcf0a71c28850ea444452f1fe
-
 ```
 
 **remember the kubeadm join token
@@ -262,7 +250,6 @@ kube-system   kube-controller-manager-k8s-master1.mpac.net   1/1       Running  
 kube-system   kube-dns-6f4fd4bdf-545z4                       0/3       Pending   0          1m        <none>         <none>
 kube-system   kube-proxy-2vqm5                               1/1       Running   0          1m        10.53.44.105   k8s-master1.mpac.net
 kube-system   kube-scheduler-k8s-master1.mpac.net            1/1       Running   0          25s       10.53.44.105   k8s-master1.mpac.net
-
 ```
 # Change Admission
 ```
@@ -276,7 +263,6 @@ Restart kubelet and docker
 ```
 # systemctl restart docker kubelet
 ```
-
 
 **Wait for 30 seconds to see if container : 'k8s_kube-apiserver_kube-apiserver-k8s-master1_kube-system_xxx' is started**
 ```
@@ -306,7 +292,6 @@ kube-system   kube-dns-6f4fd4bdf-545z4                       3/3       Running  
 kube-system   kube-flannel-ds-dxvzt                          2/2       Running   0          50s       10.53.44.105   k8s-master1.mpac.net
 kube-system   kube-proxy-2vqm5                               1/1       Running   1          11m       10.53.44.105   k8s-master1.mpac.net
 kube-system   kube-scheduler-k8s-master1.mpac.net            1/1       Running   1          10m       10.53.44.105   k8s-master1.mpac.net
-
 ```
 
 waiting for 30 seconds then check flannel interface
@@ -328,7 +313,6 @@ Taints:             node-role.kubernetes.io/master:NoSchedule
 node "k8s-master1.mpac.net" untainted
 # [root@k8s-master1 kubeadm-ha]# kubectl describe node k8s-master1|grep Taints
 Taints:             <none>
-
 ```
 
 # bring-up kubelet and cluster in master 2 and master 3
@@ -352,7 +336,6 @@ on master1
 ```
 # kubeadm token list
 
-
 TOKEN                     TTL       EXPIRES                     USAGES                   DESCRIPTION                                                EXTRA GROUPS
 dbc020.1186330e3b3f9573   22h       2018-02-22T18:44:45+05:30   authentication,signing   The default bootstrap token generated by 'kubeadm init'.   system:bootstrappers:kubeadm:default-node-token
 ```
@@ -367,7 +350,6 @@ There is no kubelet process
  1379 ?        Ssl    0:00 /usr/bin/kubelet --bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --pod-manifest-path=/etc/kubernetes/manifests --allow-privileged=true --network-plugin=cni --cni-conf-dir=/etc/cni/net.d --cni-bin-dir=/opt/cni/bin --cluster-dns=10.96.0.10 --cluster-domain=cluster.local --authorization-mode=Webhook --client-ca-file=/etc/kubernetes/pki/ca.crt --cadvisor-port=0 --cgroup-driver=cgroupfs --rotate-certificates=true --cert-dir=/var/lib/kubelet/pki
 
 The kubelet is running now
-
 ```
 
 waiting for a few minutes.....then you can verify the nodes are been joined.
@@ -455,7 +437,6 @@ etcd-0               Healthy   {"health": "true"}
 etcd-1               Healthy   {"health": "true"}   
 etcd-2               Healthy   {"health": "true"}   
 ```
-
 ## label master2 and master3 as 'master' role
 ```
 #[root@k8s-master1 ~]# kubectl label nodes k8s-master2.mpac.net node-role.kubernetes.io/master=
@@ -484,7 +465,6 @@ kube-system   kubernetes-dashboard      1         1         1            1      
 kube-system   monitoring-grafana        1         1         1            1           14m       grafana                   gcr.io/google_containers/heapster-grafana-amd64:v4.4.3                                                                                                                     k8s-app=grafana,task=monitoring
 kube-system   monitoring-influxdb       1         1         1            1           14m       influxdb                  gcr.io/google_containers/heapster-influxdb-amd64:v1.3.3  
 
-
 ```
 on k8s-master1 or k8s-master2 or k8s-master3: scale up kube-dns, calico-kube-controllers, kubernetes-dashboard replicas to 3, make all master running kube-dns
 
@@ -512,7 +492,6 @@ monitoring-influxdb       1         1         1            1           22m
 
 
 #[root@k8s-master1 ~]# kubectl get pods --all-namespaces -o wide
-
 ```
 The dns pod should be run on each of nodes.
 
@@ -555,7 +534,6 @@ vrrp_instance VI_1 {
     }
 }
 ```
-
 **Replace ${XXX} , where ${XXX} on k8s-master1,2,3 is:**
 
 | node | ${STATE} | ${INTERFACE_NAME} | ${HOST_IP} | ${PRIORITY} | ${VIRTUAL_IP} | 
@@ -571,7 +549,6 @@ virtual_router_id 168  ==>  Robin
 virtual_router_id 180  ==>  Zic
 virtual_router_id 181  ==>  Jin
 virtual_router_id 182  ==>  Alan
-
 ---
 ```
 # vi /etc/keepalived/check_apiserver.sh
@@ -600,7 +577,6 @@ else
     exit 0
 fi
 ```
----
 ```
 # chmod a+x /etc/keepalived/check_apiserver.sh
 ```
@@ -651,10 +627,6 @@ c:\> ping 10.53.44.110
 
 # Nginx load balancer configuration
 
-~~暫時先不進行
-因為Nginx是拿來做Active/Active mode
-我們目前暫時只做Active/Standby mode~~
-
 nginx load balancer configuration
 
 on master1,2,3
@@ -697,10 +669,8 @@ Check Nginx Container:
 #[root@k8s-master3 ~]# docker ps -a|grep nginx-lb
 ce77e117f710        nginx                                                    "nginx -g 'daemon of…"   2 minutes ago       Up 2 minutes                  80/tcp, 0.0.0.0:8443->8443/tcp                         nginx-lb
 
-
 # docker logs 
 ```
-
 
 # kubeproxy configuration for VIP
 on master1
@@ -749,9 +719,7 @@ kube-system   kube-proxy-7qkt5                               1/1       Running  
 kube-system   kube-proxy-lbgsj                               1/1       Running   0          4s
 kube-system   kube-proxy-qrnlt                               1/1       Running   0          5s
 
-
 ```
-
 
 # Mark unschedulable to master1,2,3
 on master1
@@ -762,8 +730,6 @@ node "k8s-master1.mpac.net" patched
 node "k8s-master2.mpac.net" patched
 #[root@k8s-master1 ~]# kubectl patch node k8s-master3.mpac.net -p '{"spec":{"unschedulable":true}}'
 node "k8s-master3.mpac.net" patched
-
-
 ```
 check if scheduling is disabled:
 ```
@@ -772,7 +738,6 @@ NAME                   STATUS                     ROLES     AGE       VERSION
 k8s-master1.mpac.net   Ready,SchedulingDisabled   master    2h        v1.9.3
 k8s-master2.mpac.net   Ready,SchedulingDisabled   master    58m       v1.9.3
 k8s-master3.mpac.net   Ready,SchedulingDisabled   master    58m       v1.9.3
-
 ```
 
 # Create token to join from worker1,2
@@ -788,8 +753,6 @@ Create a new token if the old token is expired.
 TOKEN                     TTL       EXPIRES                     USAGES                   DESCRIPTION                                                EXTRA GROUPS
 dbc020.1186330e3b3f9573   21h       2018-02-22T18:44:45+05:30   authentication,signing   The default bootstrap token generated by 'kubeadm init'.   system:bootstrappers:kubeadm:default-node-token
 
-
-
 ```
 # Join worker nodes into cluster
 on worker1,2
@@ -804,9 +767,7 @@ Change master1 IP to keepalived VIP:
     server: https://10.53.44.105:6443
     to
     server: https://10.53.44.110:6443
-    
 ```
-
 **Join worker nodes into cluster**
 ```
 # kubeadm join --token dbc020.1186330e3b3f9573 10.53.44.105:6443 --skip-preflight-checks --discovery-token-unsafe-skip-ca-verification
@@ -830,7 +791,6 @@ k8s-master2.mpac.net   Ready,SchedulingDisabled   master    15h       v1.9.3
 k8s-master3.mpac.net   Ready,SchedulingDisabled   master    15h       v1.9.3
 k8s-node1.mpac.net     Ready                      <none>    13h       v1.9.3
 k8s-node2.mpac.net     Ready                      <none>    13h       v1.9.3
-
 ```
 Change kubelet connection
 ```
@@ -841,7 +801,6 @@ Change kubelet connection
 
 # systemctl restart kubelet
 ```
-
 # HA Validation
 on any node (master1 or 2 or 3 or worker1 or 2)
 * Check health status
@@ -894,7 +853,6 @@ controller-manager   Healthy   ok
 etcd-0               Healthy   {"health": "true"}
 etcd-1               Healthy   {"health": "true"}
 etcd-2               Healthy   {"health": "true"}
-
 ```
 
 ---
@@ -916,13 +874,11 @@ on master1
 ```
 #[root@k8s-master1 ~]# poweroff
 ```
-
 on master2 or 3
 * Check the node where VIP is binding
 ```
 #[root@k8s-master2 ~]# ip a|grep $(cat /etc/keepalived/keepalived-k8s.conf|grep -A1 virtual_ipaddress|tail -1|sed -e 's/^ *//')
     inet 10.53.44.110/32 scope global eth0
-
 ```
 
 on any node (master2 or 3 or worker1 or 2)
@@ -945,9 +901,7 @@ member 5b48d88ad920b750 is healthy: got healthy result from http://10.53.44.106:
 member f831bcb90f445493 is healthy: got healthy result from http://10.53.44.107:2379
 cluster is healthy
 
-
 / # exit
-
 
 #[root@k8s-master2 ~]# kubectl get node
 NAME                   STATUS                        ROLES     AGE       VERSION
@@ -956,21 +910,19 @@ k8s-master2.mpac.net   Ready,SchedulingDisabled      master    15h       v1.9.3
 k8s-master3.mpac.net   Ready,SchedulingDisabled      master    15h       v1.9.3
 k8s-node1.mpac.net     Ready                         <none>    13h       v1.9.3
 k8s-node2.mpac.net     Ready                         <none>    13h       v1.9.3
-
-
 ```
 ```
 
 * Create one deployment when master1 is crashed
 ```
 # kubectl run nginx2 --image=nginx --port=80
+```
 # kubectl get pod -owide
 NAME                      READY     STATUS    RESTARTS   AGE       IP           NODE
 nginx-7cbc4b4d9c-654rh    1/1       Running   0          2h        10.244.4.2   k8s-worker1
 nginx2-7895f859bf-z6s7c   1/1       Running   0          2h        10.244.4.4   k8s-worker1
 
 ```
-
 * Create 100 deployments when master1 is crashed
 You can check the scheduler which should create 100 deployments on worker1,2 separately.
 Also, the memory usage is very cost saving (less than 1GB) when mass deployments created.
@@ -1083,13 +1035,10 @@ nginx98-74bfc4b7b7-cgzlv   1/1       Running   0          3m        10.244.3.51 
 nginx99-5dc897865-jm9k9    1/1       Running   0          3m        10.244.4.52   k8s-worker1
 
 ```
-
-
 * While master1 node is recovered, what will happed ?
 Power on master1
 
 on master1 , Power-on this node
-
 
 on master1,2,3
 check which node the VIP is binding with.
@@ -1115,8 +1064,6 @@ Nov 03 02:02:41 k8s-master1 Keepalived_vrrp[8837]: VRRP_Instance(VI_1) Entering 
 
 [root@k8s-master1 ~]# ip a|grep $(cat /etc/keepalived/keepalived-k8s.conf|grep -A1 virtual_ipaddress|tail -1|sed -e 's/^ *//')
     inet 10.53.44.110/32 scope global eno16777984
-
-
 
 [root@k8s-node1 ~]# kubectl get cs
 NAME                 STATUS    MESSAGE              ERROR
