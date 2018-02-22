@@ -1080,8 +1080,6 @@ k8s-master2.mpac.net   Ready,SchedulingDisabled   master    15h       v1.9.3
 k8s-master3.mpac.net   Ready,SchedulingDisabled   master    15h       v1.9.3
 k8s-node1.mpac.net     Ready                      <none>    14h       v1.9.3
 k8s-node2.mpac.net     Ready                      <none>    14h       v1.9.3
-
-
 ```
 * master1 is power-off during pods are creating
 
