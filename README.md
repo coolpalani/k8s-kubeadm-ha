@@ -21,11 +21,11 @@ This is an attempt to install the k8s cluster proposed in the tutorial kubeadm-h
 
 | hostname | IP| Components |
 | -------- | -------- | -------- |
-| k8s-master1.kubernates.com    | 10.53.44.105        | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
-| k8s-master2.kubernates.com    | 10.53.44.106        | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
-| k8s-master3.kubernates.com    | 10.53.44.107        | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
-| k8s-node1.kubernates.com      | 10.53.44.108        | kubelet, kube-proxy     |
-| k8s-node2.kubernates.com      | 10.53.44.109        | kubelet, kube-proxy     |
+| k8s-master1.kubernates.com   | 10.53.44.105  | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
+| k8s-master2.kubernates.com   | 10.53.44.106  | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
+| k8s-master3.kubernates.com   | 10.53.44.107  | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
+| k8s-node1.kubernates.com     | 10.53.44.108  | kubelet, kube-proxy     |
+| k8s-node2.kubernates.com     | 10.53.44.109  | kubelet, kube-proxy     |
 
 * **Keepalived  VIP : 10.53.44.110**
 
@@ -45,7 +45,7 @@ on master1,2,3, worker1,2
 
 Turn off swap
 # vi /etc/fstab
-    #/dev/sda4 swap                    swap    defaults        0 0
+#/dev/sda4 swap                    swap    defaults        0 0
 
 # reboot
 or just swapoff /dev/sda4
@@ -141,9 +141,9 @@ on master1,2,3
 # docker pull gcr.io/google_containers/kube-proxy-amd64:v1.9.1
 # docker pull gcr.io/google_containers/kube-scheduler-amd64:v1.9.1
 # docker pull gcr.io/google_containers/kubernetes-dashboard-amd64:v1.8.2
-# docker pull nginx
 # docker pull gcr.io/google_containers/etcd-amd64:3.2.14
 # docker pull gcr.io/google_containers/pause-amd64:3.1
+# docker pull nginx
 
 # docker images
 ```
