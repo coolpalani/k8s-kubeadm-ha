@@ -21,11 +21,11 @@ This is an attempt to install the k8s cluster proposed in the tutorial kubeadm-h
 
 | hostname | IP| Components |
 | -------- | -------- | -------- |
-| k8s-master1.mpac.net    | 10.53.44.105        | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
-| k8s-master2.mpac.net    | 10.53.44.106        | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
-| k8s-master3.mpac.net    | 10.53.44.107        | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
-| k8s-node1.mpac.net      | 10.53.44.108        | kubelet, kube-proxy     |
-| k8s-node2.mpac.net      | 10.53.44.109        | kubelet, kube-proxy     |
+| k8s-master1.kubernates.com    | 10.53.44.105        | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
+| k8s-master2.kubernates.com    | 10.53.44.106        | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
+| k8s-master3.kubernates.com    | 10.53.44.107        | keepalived, nginx, etcd, kubelet, kube-apiserver, kube-scheduler, kube-proxy     |
+| k8s-node1.kubernates.com      | 10.53.44.108        | kubelet, kube-proxy     |
+| k8s-node2.kubernates.com      | 10.53.44.109        | kubelet, kube-proxy     |
 
 * **Keepalived  VIP : 10.53.44.110**
 
@@ -247,11 +247,11 @@ then test it:
 ```
 # [root@k8s-master1 ~]# kubectl get pods --all-namespaces -o wide
 NAMESPACE     NAME                                           READY     STATUS    RESTARTS   AGE       IP             NODE
-kube-system   kube-apiserver-k8s-master1.mpac.net            1/1       Running   0          46s       10.53.44.105   k8s-master1.mpac.net
-kube-system   kube-controller-manager-k8s-master1.mpac.net   1/1       Running   0          37s       10.53.44.105   k8s-master1.mpac.net
+kube-system   kube-apiserver-k8s-master1.kubernates.com            1/1       Running   0          46s       10.53.44.105   k8s-master1.kubernates.com
+kube-system   kube-controller-manager-k8s-master1.kubernates.com   1/1       Running   0          37s       10.53.44.105   k8s-master1.kubernates.com
 kube-system   kube-dns-6f4fd4bdf-545z4                       0/3       Pending   0          1m        <none>         <none>
-kube-system   kube-proxy-2vqm5                               1/1       Running   0          1m        10.53.44.105   k8s-master1.mpac.net
-kube-system   kube-scheduler-k8s-master1.mpac.net            1/1       Running   0          25s       10.53.44.105   k8s-master1.mpac.net
+kube-system   kube-proxy-2vqm5                               1/1       Running   0          1m        10.53.44.105   k8s-master1.kubernates.com
+kube-system   kube-scheduler-k8s-master1.kubernates.com            1/1       Running   0          25s       10.53.44.105   k8s-master1.kubernates.com
 ```
 # Change Admission
 ```
@@ -288,12 +288,12 @@ clusterrolebinding "calico-node" configured
 
 # [root@k8s-master1 kubeadm-ha]# kubectl get pods --all-namespaces -o wide
 NAMESPACE     NAME                                           READY     STATUS    RESTARTS   AGE       IP             NODE
-kube-system   kube-apiserver-k8s-master1.mpac.net            1/1       Running   1          6m        10.53.44.105   k8s-master1.mpac.net
-kube-system   kube-controller-manager-k8s-master1.mpac.net   1/1       Running   1          10m       10.53.44.105   k8s-master1.mpac.net
-kube-system   kube-dns-6f4fd4bdf-545z4                       3/3       Running   0          11m       10.244.0.2     k8s-master1.mpac.net
-kube-system   kube-flannel-ds-dxvzt                          2/2       Running   0          50s       10.53.44.105   k8s-master1.mpac.net
-kube-system   kube-proxy-2vqm5                               1/1       Running   1          11m       10.53.44.105   k8s-master1.mpac.net
-kube-system   kube-scheduler-k8s-master1.mpac.net            1/1       Running   1          10m       10.53.44.105   k8s-master1.mpac.net
+kube-system   kube-apiserver-k8s-master1.kubernates.com            1/1       Running   1          6m        10.53.44.105   k8s-master1.kubernates.com
+kube-system   kube-controller-manager-k8s-master1.kubernates.com   1/1       Running   1          10m       10.53.44.105   k8s-master1.kubernates.com
+kube-system   kube-dns-6f4fd4bdf-545z4                       3/3       Running   0          11m       10.244.0.2     k8s-master1.kubernates.com
+kube-system   kube-flannel-ds-dxvzt                          2/2       Running   0          50s       10.53.44.105   k8s-master1.kubernates.com
+kube-system   kube-proxy-2vqm5                               1/1       Running   1          11m       10.53.44.105   k8s-master1.kubernates.com
+kube-system   kube-scheduler-k8s-master1.kubernates.com            1/1       Running   1          10m       10.53.44.105   k8s-master1.kubernates.com
 ```
 
 waiting for 30 seconds then check flannel interface
@@ -312,7 +312,7 @@ untaint master1 in order to schedule resources
 # [root@k8s-master1 kubeadm-ha]# kubectl describe node k8s-master1|grep Taints
 Taints:             node-role.kubernetes.io/master:NoSchedule
 # [root@k8s-master1 kubeadm-ha]# kubectl taint nodes --all node-role.kubernetes.io/master-
-node "k8s-master1.mpac.net" untainted
+node "k8s-master1.kubernates.com" untainted
 # [root@k8s-master1 kubeadm-ha]# kubectl describe node k8s-master1|grep Taints
 Taints:             <none>
 ```
@@ -360,9 +360,9 @@ waiting for a few minutes.....then you can verify the nodes are been joined.
 ```
 # [root@k8s-master1 ~]# kubectl get nodes
 NAME                   STATUS    ROLES     AGE       VERSION
-k8s-master1.mpac.net   Ready     master    1h        v1.9.3
-k8s-master2.mpac.net   Ready     <none>    3m        v1.9.3
-k8s-master3.mpac.net   Ready     <none>    3m        v1.9.3
+k8s-master1.kubernates.com   Ready     master    1h        v1.9.3
+k8s-master2.kubernates.com   Ready     <none>    3m        v1.9.3
+k8s-master3.kubernates.com   Ready     <none>    3m        v1.9.3
 
 # kubectl get cs
 NAME                 STATUS    MESSAGE              ERROR
@@ -427,9 +427,9 @@ on master1
 ```
 #[root@k8s-master1 ~]# kubectl get nodes
 NAME                   STATUS    ROLES     AGE       VERSION
-k8s-master1.mpac.net   Ready     master    1h        v1.9.3
-k8s-master2.mpac.net   Ready     <none>    3m        v1.9.3
-k8s-master3.mpac.net   Ready     <none>    3m        v1.9.3
+k8s-master1.kubernates.com   Ready     master    1h        v1.9.3
+k8s-master2.kubernates.com   Ready     <none>    3m        v1.9.3
+k8s-master3.kubernates.com   Ready     <none>    3m        v1.9.3
 
 #[root@k8s-master1]# kubectl get cs
 NAME                 STATUS    MESSAGE              ERROR
@@ -441,16 +441,16 @@ etcd-2               Healthy   {"health": "true"}
 ```
 ## label master2 and master3 as 'master' role
 ```
-#[root@k8s-master1 ~]# kubectl label nodes k8s-master2.mpac.net node-role.kubernetes.io/master=
-node "k8s-master2.mpac.net" labeled
-#[root@k8s-master1 ~]# kubectl label nodes k8s-master3.mpac.net node-role.kubernetes.io/master=
-node "k8s-master3.mpac.net" labeled
+#[root@k8s-master1 ~]# kubectl label nodes k8s-master2.kubernates.com node-role.kubernetes.io/master=
+node "k8s-master2.kubernates.com" labeled
+#[root@k8s-master1 ~]# kubectl label nodes k8s-master3.kubernates.com node-role.kubernetes.io/master=
+node "k8s-master3.kubernates.com" labeled
 
 #[root@k8s-master1 ~]# kubectl get nodes
 NAME                   STATUS    ROLES     AGE       VERSION
-k8s-master1.mpac.net   Ready     master    1h        v1.9.3
-k8s-master2.mpac.net   Ready     master    18m       v1.9.3
-k8s-master3.mpac.net   Ready     master    18m       v1.9.3
+k8s-master1.kubernates.com   Ready     master    1h        v1.9.3
+k8s-master2.kubernates.com   Ready     master    18m       v1.9.3
+k8s-master3.kubernates.com   Ready     master    18m       v1.9.3
 ```
 ## replicate kube-system pod
 on master1
@@ -725,20 +725,20 @@ kube-system   kube-proxy-qrnlt                               1/1       Running  
 # Mark unschedulable to master1,2,3
 on master1
 ```
-#[root@k8s-master1 ~]# kubectl patch node k8s-master1.mpac.net -p '{"spec":{"unschedulable":true}}'
-node "k8s-master1.mpac.net" patched
-#[root@k8s-master1 ~]# kubectl patch node k8s-master2.mpac.net -p '{"spec":{"unschedulable":true}}'
-node "k8s-master2.mpac.net" patched
-#[root@k8s-master1 ~]# kubectl patch node k8s-master3.mpac.net -p '{"spec":{"unschedulable":true}}'
-node "k8s-master3.mpac.net" patched
+#[root@k8s-master1 ~]# kubectl patch node k8s-master1.kubernates.com -p '{"spec":{"unschedulable":true}}'
+node "k8s-master1.kubernates.com" patched
+#[root@k8s-master1 ~]# kubectl patch node k8s-master2.kubernates.com -p '{"spec":{"unschedulable":true}}'
+node "k8s-master2.kubernates.com" patched
+#[root@k8s-master1 ~]# kubectl patch node k8s-master3.kubernates.com -p '{"spec":{"unschedulable":true}}'
+node "k8s-master3.kubernates.com" patched
 ```
 check if scheduling is disabled:
 ```
 #[root@k8s-master1 ~]# kubectl get nodes
 NAME                   STATUS                     ROLES     AGE       VERSION
-k8s-master1.mpac.net   Ready,SchedulingDisabled   master    2h        v1.9.3
-k8s-master2.mpac.net   Ready,SchedulingDisabled   master    58m       v1.9.3
-k8s-master3.mpac.net   Ready,SchedulingDisabled   master    58m       v1.9.3
+k8s-master1.kubernates.com   Ready,SchedulingDisabled   master    2h        v1.9.3
+k8s-master2.kubernates.com   Ready,SchedulingDisabled   master    58m       v1.9.3
+k8s-master3.kubernates.com   Ready,SchedulingDisabled   master    58m       v1.9.3
 ```
 
 # Create token to join from worker1,2
@@ -785,11 +785,11 @@ This node has joined the cluster:
 
 #[root@k8s-node1 ~]# kubectl get nodes
 NAME                   STATUS                     ROLES     AGE       VERSION
-k8s-master1.mpac.net   Ready,SchedulingDisabled   master    16h       v1.9.3
-k8s-master2.mpac.net   Ready,SchedulingDisabled   master    15h       v1.9.3
-k8s-master3.mpac.net   Ready,SchedulingDisabled   master    15h       v1.9.3
-k8s-node1.mpac.net     Ready                      <none>    13h       v1.9.3
-k8s-node2.mpac.net     Ready                      <none>    13h       v1.9.3
+k8s-master1.kubernates.com   Ready,SchedulingDisabled   master    16h       v1.9.3
+k8s-master2.kubernates.com   Ready,SchedulingDisabled   master    15h       v1.9.3
+k8s-master3.kubernates.com   Ready,SchedulingDisabled   master    15h       v1.9.3
+k8s-node1.kubernates.com     Ready                      <none>    13h       v1.9.3
+k8s-node2.kubernates.com     Ready                      <none>    13h       v1.9.3
 ```
 Change kubelet connection
 ```
@@ -817,12 +817,12 @@ kube-system   calico-node-xjzvc                              2/2       Running  
 kube-system   heapster-698c5f45bd-bjnqr                      1/1       Running   0          15h
 kube-system   heapster-698c5f45bd-gzlkd                      1/1       Running   0          14h
 kube-system   heapster-698c5f45bd-kf26m                      1/1       Running   0          14h
-kube-system   kube-apiserver-k8s-master1.mpac.net            1/1       Running   1          16h
-kube-system   kube-apiserver-k8s-master2.mpac.net            1/1       Running   0          14h
-kube-system   kube-apiserver-k8s-master3.mpac.net            1/1       Running   0          14h
-kube-system   kube-controller-manager-k8s-master1.mpac.net   1/1       Running   1          16h
-kube-system   kube-controller-manager-k8s-master2.mpac.net   1/1       Running   1          15h
-kube-system   kube-controller-manager-k8s-master3.mpac.net   1/1       Running   1          15h
+kube-system   kube-apiserver-k8s-master1.kubernates.com            1/1       Running   1          16h
+kube-system   kube-apiserver-k8s-master2.kubernates.com            1/1       Running   0          14h
+kube-system   kube-apiserver-k8s-master3.kubernates.com            1/1       Running   0          14h
+kube-system   kube-controller-manager-k8s-master1.kubernates.com   1/1       Running   1          16h
+kube-system   kube-controller-manager-k8s-master2.kubernates.com   1/1       Running   1          15h
+kube-system   kube-controller-manager-k8s-master3.kubernates.com   1/1       Running   1          15h
 kube-system   kube-dns-6f4fd4bdf-545z4                       3/3       Running   0          16h
 kube-system   kube-dns-6f4fd4bdf-bw792                       3/3       Running   0          14h
 kube-system   kube-dns-6f4fd4bdf-jgp5q                       3/3       Running   0          14h
@@ -836,9 +836,9 @@ kube-system   kube-proxy-7qkt5                               1/1       Running  
 kube-system   kube-proxy-lbgsj                               1/1       Running   0          14h
 kube-system   kube-proxy-qrnlt                               1/1       Running   0          14h
 kube-system   kube-proxy-zxz6j                               1/1       Running   0          13h
-kube-system   kube-scheduler-k8s-master1.mpac.net            1/1       Running   1          16h
-kube-system   kube-scheduler-k8s-master2.mpac.net            1/1       Running   1          15h
-kube-system   kube-scheduler-k8s-master3.mpac.net            1/1       Running   1          15h
+kube-system   kube-scheduler-k8s-master1.kubernates.com            1/1       Running   1          16h
+kube-system   kube-scheduler-k8s-master2.kubernates.com            1/1       Running   1          15h
+kube-system   kube-scheduler-k8s-master3.kubernates.com            1/1       Running   1          15h
 kube-system   kubernetes-dashboard-6f8bfb4cf6-2w86k          1/1       Running   0          15h
 kube-system   kubernetes-dashboard-6f8bfb4cf6-46j4c          1/1       Running   0          14h
 kube-system   kubernetes-dashboard-6f8bfb4cf6-np2vf          1/1       Running   0          14h
@@ -900,11 +900,11 @@ cluster is healthy
 
 #[root@k8s-master2 ~]# kubectl get node
 NAME                   STATUS                        ROLES     AGE       VERSION
-k8s-master1.mpac.net   NotReady,SchedulingDisabled   master    16h       v1.9.3
-k8s-master2.mpac.net   Ready,SchedulingDisabled      master    15h       v1.9.3
-k8s-master3.mpac.net   Ready,SchedulingDisabled      master    15h       v1.9.3
-k8s-node1.mpac.net     Ready                         <none>    13h       v1.9.3
-k8s-node2.mpac.net     Ready                         <none>    13h       v1.9.3
+k8s-master1.kubernates.com   NotReady,SchedulingDisabled   master    16h       v1.9.3
+k8s-master2.kubernates.com   Ready,SchedulingDisabled      master    15h       v1.9.3
+k8s-master3.kubernates.com   Ready,SchedulingDisabled      master    15h       v1.9.3
+k8s-node1.kubernates.com     Ready                         <none>    13h       v1.9.3
+k8s-node2.kubernates.com     Ready                         <none>    13h       v1.9.3
 ```
 ```
 * Create one deployment when master1 is crashed
@@ -1068,11 +1068,11 @@ etcd-2               Healthy   {"health": "true"}
 
 [root@k8s-master1 ~]# kubectl get node
 NAME                   STATUS                     ROLES     AGE       VERSION
-k8s-master1.mpac.net   Ready,SchedulingDisabled   master    17h       v1.9.3
-k8s-master2.mpac.net   Ready,SchedulingDisabled   master    15h       v1.9.3
-k8s-master3.mpac.net   Ready,SchedulingDisabled   master    15h       v1.9.3
-k8s-node1.mpac.net     Ready                      <none>    14h       v1.9.3
-k8s-node2.mpac.net     Ready                      <none>    14h       v1.9.3
+k8s-master1.kubernates.com   Ready,SchedulingDisabled   master    17h       v1.9.3
+k8s-master2.kubernates.com   Ready,SchedulingDisabled   master    15h       v1.9.3
+k8s-master3.kubernates.com   Ready,SchedulingDisabled   master    15h       v1.9.3
+k8s-node1.kubernates.com     Ready                      <none>    14h       v1.9.3
+k8s-node2.kubernates.com     Ready                      <none>    14h       v1.9.3
 ```
 * master1 is power-off during pods are creating
 
