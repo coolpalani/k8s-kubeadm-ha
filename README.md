@@ -1,4 +1,5 @@
 # Introduction kubernetes HA (version v1.9.3)
+![](https://raw.githubusercontent.com/coolpalani/k8s-kubeadm-ha/master/images/Kubernetes.png)
 This is an attempt to install the k8s cluster proposed in the tutorial kubeadm-ha.
 ## SPEC & Versions:
 * VM x 5 : vCPUx2 , vRAM:4GB , Hard Disk: 30GB
